@@ -1,0 +1,14 @@
+spring:
+  datasource:
+#    bu faqat local run qilingan payt online postgres dbga ulanish uchun
+    username: crm_samo_user
+    password: k3ezWgPCDUbzJtGcEUwn2ySEdzqE5F5K
+    url: jdbc:postgresql://dpg-cov1bnol6cac73bdh76g-a.oregon-postgres.render.com/crm_samo
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect

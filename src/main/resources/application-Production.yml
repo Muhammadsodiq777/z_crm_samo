@@ -1,0 +1,14 @@
+spring:
+  datasource:
+#    bu haqiqiy Production emas faqatgina test uchun doimiy serverga qo'yilgan payt asosiysi ulanadi
+    username: admin
+    password: gMgUfDdvg94j9bdPLpk7e29zp1bxjBvm
+    url: jdbc:postgresql://dpg-clep1rjl00ks739sfr80-a/samo_db
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
