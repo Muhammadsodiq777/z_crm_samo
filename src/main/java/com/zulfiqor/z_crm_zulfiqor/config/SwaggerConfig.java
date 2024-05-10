@@ -20,8 +20,7 @@ import org.springframework.context.annotation.Configuration;
     info = @Info(title = "Zulfiqor Crm API"),
     security = @SecurityRequirement(name = "Authorization"),
     servers = {
-        @Server(url = "https://93c9-95-214-211-192.ngrok-free.app", description = "Ngrok Server"),
-        @Server(url = "https://zulfiqor-crm.onrender.com", description = "Dev Server"),
+        @Server(url = "https://zcrmsamo-production.up.railway.app", description = "Railway"),
         @Server(url = "http://localhost:8088", description = "Local Server")
     }
 )
