@@ -168,6 +168,7 @@ public class InProductsServiceImpl implements InProductsService {
                 response.setId(product.getId());
                 response.setName(product.getName());
                 response.setCode(product.getCode());
+                response.setDescription(product.getDescription());
                 response.setPrice(priceResponses.stream().mapToDouble(PriceResponse::getPrice).sum());
                 response.setQuantity(priceResponses.stream().mapToLong(PriceResponse::getQuantity).sum());
                 response.setPrices(priceResponses);

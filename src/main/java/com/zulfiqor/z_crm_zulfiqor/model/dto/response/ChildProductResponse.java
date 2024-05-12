@@ -23,6 +23,7 @@ public class ChildProductResponse implements Serializable {
     private String name;
     private String imageUrl;
     private String code;
+    private String description;
     private Double price;
     private Long quantity;
     private String date;

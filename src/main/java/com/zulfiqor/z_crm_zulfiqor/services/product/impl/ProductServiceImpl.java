@@ -115,6 +115,7 @@ public class ProductServiceImpl implements ProductService {
             productResponse.setId(product.getId());
             productResponse.setName(product.getName());
             productResponse.setCode(product.getCode());
+            productResponse.setDescription(productResponse.getDescription());
 //            productResponse.setQuantity(product.getTotalNum());
             responses.add(productResponse);
         }
