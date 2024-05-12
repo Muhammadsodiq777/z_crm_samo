@@ -25,6 +25,9 @@ public class Product extends BaseEntity {
     @Column(name = "IMAGE_URL")
     private String imageUrl;
 
+    @Column(name = "CODE")
+    private String code;
+
     @Column(name = "TOTAL_NUM")
     private Long totalNum;
 

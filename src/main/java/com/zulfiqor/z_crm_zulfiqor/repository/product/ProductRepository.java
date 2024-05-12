@@ -11,4 +11,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Query(value = "select * from pm_products pp where  pp.product_group_id = ? and pp.active = true", nativeQuery = true)
     List<Product> findAllByActiveIsTrueAndProductGroup(Long productGroupId);
+
+    List<Product> findAllByNameContainsIgnoreCaseOrCodeContainsIgnoreCaseAndActiveIsTrue(String name, String code);
 }

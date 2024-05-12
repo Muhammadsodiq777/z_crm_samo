@@ -33,4 +33,11 @@ public class ProductController {
         BaseResponse<?> response = productService.getByProductGroupId(parentId);
         return ResponseEntity.ok(response);
     }
+
+    @Operation(summary = "Mahsulotlar ro'yhatidan qidirish", description = "Mahsulot nomi yoki shtrix code beriladi")
+    @GetMapping("/search")
+    private ResponseEntity<?> getId(@RequestParam(name = "param") String param){
+        BaseResponse<?> response = productService.searProductsByNameOrCode(param);
+        return ResponseEntity.ok(response);
+    }
 }

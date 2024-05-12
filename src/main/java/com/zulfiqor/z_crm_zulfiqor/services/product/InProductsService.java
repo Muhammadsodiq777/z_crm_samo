@@ -12,6 +12,7 @@ public interface InProductsService {
     BaseResponse<?> updateProduct(String id, InProductsRequest productListRequest);
 
     BaseResponse<?> getAllPresentProductsInWarehouse(Long id);
+    BaseResponse<?> searchProductByNameOrCode(String param);
 
     BaseResponse<?> getInProductById(Long id);
 

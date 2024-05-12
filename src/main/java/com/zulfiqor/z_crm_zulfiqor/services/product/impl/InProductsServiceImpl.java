@@ -30,7 +30,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static com.zulfiqor.z_crm_zulfiqor.exception.HttpResponseCode.NOT_FOUND;
 
@@ -105,6 +108,43 @@ public class InProductsServiceImpl implements InProductsService {
         return BaseResponse.success(parentProductResponses);
     }
 
+    @Override
+    public BaseResponse<?> searchProductByNameOrCode(String param) { /// bu ham vaqtinchalik yechim keyinroq optimization qilinadi
+        List<Product> products = productRepository.findAllByNameContainsIgnoreCaseOrCodeContainsIgnoreCaseAndActiveIsTrue(param, param);
+
+        Map<ProductGroup, ParentProductResponse> parentMap = products.stream()
+                .map(Product::getProductGroup)
+                .distinct()
+                .collect(Collectors.toMap(
+                        Function.identity(),
+                        productGroup -> {
+                            ParentProductResponse parentProductResponse = new ParentProductResponse();
+                            parentProductResponse.setId(productGroup.getId());
+                            parentProductResponse.setName(productGroup.getName());
+                            return parentProductResponse;
+                        }
+                ));
+
+        List<ParentProductResponse> responses = new ArrayList<>();
+        parentMap.forEach((parent,resGroup)-> {
+            List<Product> children = products.stream()
+                    .filter(product -> product.getProductGroup().equals(parent))
+                    .collect(Collectors.toList());
+
+
+            List<ChildProductResponse> productResponse = getAllProducts(children);
+
+            long totalNum = productResponse.stream().mapToLong(ChildProductResponse::getQuantity).sum();
+            resGroup.setTotalNumber(totalNum);
+            resGroup.setTotalPrice((productResponse
+                    .stream().mapToDouble(ChildProductResponse::getPrice).sum()) * totalNum);
+
+            resGroup.setChildren(productResponse);
+            responses.add(resGroup);
+        });
+        return BaseResponse.success(!responses.isEmpty() ? responses : new ArrayList<>());
+    }
+
     // if needed, return more fields
     @Override
     public BaseResponse<?> getInProductById(Long id) {
@@ -127,6 +167,7 @@ public class InProductsServiceImpl implements InProductsService {
             if (!priceResponses.isEmpty()) {
                 response.setId(product.getId());
                 response.setName(product.getName());
+                response.setCode(product.getCode());
                 response.setPrice(priceResponses.stream().mapToDouble(PriceResponse::getPrice).sum());
                 response.setQuantity(priceResponses.stream().mapToLong(PriceResponse::getQuantity).sum());
                 response.setPrices(priceResponses);

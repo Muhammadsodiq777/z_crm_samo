@@ -42,6 +42,12 @@ public class InProductsController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(summary = "Name va code bo'yicha qidirish")
+    @GetMapping("search")
+    public ResponseEntity<?> searchProductByNameOrCode(@RequestParam(name = "param") String param) {
+        BaseResponse<?> response = inProductsService.searchProductByNameOrCode(param);
+        return ResponseEntity.ok(response);
+    }
 
     @Operation(summary = "Omborda mavjud mahsulotlar ro'yhatini olish")
     @GetMapping("get/{inProductId}")

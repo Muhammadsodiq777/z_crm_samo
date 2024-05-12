@@ -20,7 +20,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,6 +43,7 @@ public class ProductServiceImpl implements ProductService {
 
         Product product = new Product();
         product.setName(request.name());
+        product.setCode(request.code());
         product.setDescription(request.description());
         product.setActive(true);
         product.setTotalNum(0L);
@@ -63,12 +66,43 @@ public class ProductServiceImpl implements ProductService {
         for (ProductGroup productGroup: productGroups) {
             List<Product> products = productRepository.findAllByActiveIsTrueAndProductGroup(productGroup.getId());
             ParentProductResponse parentProductResponse = new ParentProductResponse();
-            parentProductResponse.setName(productGroup.getName());
             parentProductResponse.setId(productGroup.getId());
+            parentProductResponse.setName(productGroup.getName());
             parentProductResponse.setChildren(getProductResponse(products));
             responses.add(parentProductResponse);
         }
 
+        return BaseResponse.success(!responses.isEmpty() ? responses : new ArrayList<>());
+    }
+
+    @Override
+    public BaseResponse<?> searProductsByNameOrCode(String param) { /// hozirchalik yechim keyinroq update qilinadi
+        List<Product> products = productRepository.findAllByNameContainsIgnoreCaseOrCodeContainsIgnoreCaseAndActiveIsTrue(param, param);
+
+        Map<ProductGroup, ParentProductResponse> parentMap = products.stream()
+                .map(Product::getProductGroup)
+                .distinct()
+                .collect(Collectors.toMap(
+                        Function.identity(),
+                        productGroup -> {
+                            ParentProductResponse parentProductResponse = new ParentProductResponse();
+                            parentProductResponse.setId(productGroup.getId());
+                            parentProductResponse.setName(productGroup.getName());
+                            return parentProductResponse;
+                        }
+                ));
+
+        List<ParentProductResponse> responses = new ArrayList<>();
+        parentMap.forEach((parent,resGroup)-> {
+            List<Product> children = products.stream()
+                    .filter(product -> product.getProductGroup().equals(parent))
+                    .collect(Collectors.toList());
+
+            List<ChildProductResponse> productResponse = getProductResponse(children);
+
+            resGroup.setChildren(productResponse);
+            responses.add(resGroup);
+        });
         return BaseResponse.success(!responses.isEmpty() ? responses : new ArrayList<>());
     }
 
@@ -78,8 +112,9 @@ public class ProductServiceImpl implements ProductService {
 
         for (Product product: products) {
             ChildProductResponse productResponse = new ChildProductResponse();
-            productResponse.setName(product.getName());
             productResponse.setId(product.getId());
+            productResponse.setName(product.getName());
+            productResponse.setCode(product.getCode());
 //            productResponse.setQuantity(product.getTotalNum());
             responses.add(productResponse);
         }

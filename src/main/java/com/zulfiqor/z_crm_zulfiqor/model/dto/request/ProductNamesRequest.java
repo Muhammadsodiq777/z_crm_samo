@@ -10,6 +10,7 @@ public record ProductNamesRequest(
         @NotEmpty
         @NotNull
         String name,
+        String code,
         String description
 ) {
 }
